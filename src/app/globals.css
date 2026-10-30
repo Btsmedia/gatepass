@@ -1,14 +1,10 @@
-/* Gatepass design tokens: Jost, soft grey cards, black pills, lavender accents. Mirrors the prototype. */
+/* Light theme only. Gatepass design tokens: Jost, soft grey cards, black pills, lavender accents. Mirrors the prototype. */
 :root{
   --bg:#F7F7F5; --surface:#FFFFFF; --card:#EDECE7; --sunk:#EAE9E4; --ink:#111214; --muted:#6A6A70; --line:#E1E0DB;
   --lav:#BFB6F8; --lav-strong:#7E6CF0; --lav-ink:#1C1736; --good:#1D7A4C; --good-soft:#DDF0E4; --bad:#B3261E; --bad-soft:#F9E0DD; --warn:#9A560E; --warn-soft:#F6E8D3;
   --sky-a:#4C77AD; --sky-b:#93B3D8;
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){ :root{
-  --bg:#111113; --surface:#1A1A1D; --card:#222226; --sunk:#27272B; --ink:#F3F3F1; --muted:#A3A3AA; --line:#2E2E33;
-  --lav:#A79BF5; --lav-strong:#B8ADFA; --lav-ink:#15112B; --good:#5FD394; --good-soft:#163020; --bad:#FF8A80; --bad-soft:#3A1A18; --warn:#F2B36B; --warn-soft:#33240F;
-  --sky-a:#16233A; --sky-b:#2A4266; color-scheme:dark } }
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg); color:var(--ink); font-family:var(--font-jost), "Avenir Next", system-ui, sans-serif; font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}

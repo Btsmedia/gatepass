@@ -29,7 +29,7 @@ nav.main a{display:inline-flex; align-items:center; gap:8px; text-decoration:non
 nav.main a:hover{background:var(--sunk)}
 nav.main a[aria-current="page"]{background:var(--ink); color:var(--bg)}
 nav.main .ico{width:18px; height:18px}
-@media (max-width:720px){ nav.main a span{display:none} nav.main a{padding:11px 13px} header.top .brand{display:none} }
+
 .me i{display:grid; place-items:center; width:40px; height:40px; border-radius:50%; background:var(--lav); color:var(--lav-ink); font-style:normal; font-weight:600}
 footer.site{border-top:0; padding-block:0}
 .footcols{display:grid; grid-template-columns:1.4fr repeat(3,minmax(0,1fr)); gap:28px; padding-block:44px 20px; border-top:1px solid var(--line)}
@@ -126,3 +126,20 @@ footer.site{border-top:1px solid var(--line); padding-block:28px; color:var(--mu
 /* Headings at full strength: no faded or grey parts */
 h1,h2,h3,h4{opacity:1}
 h1 span,h2 span,h3 span,h4 span{color:inherit !important; opacity:1 !important}
+
+/* ---- Mobile tab bar: dark pill, active item becomes a white pill with a filled icon and label ---- */
+.tabbar{display:none}
+@media (max-width:720px){
+  header.top nav.main{display:none}
+  .tabbar{position:fixed; z-index:40; left:max(12px, env(safe-area-inset-left)); right:max(12px, env(safe-area-inset-right)); bottom:calc(12px + env(safe-area-inset-bottom)); display:flex; align-items:center; justify-content:space-between; gap:4px; padding:8px; border-radius:999px; background:#17161F; box-shadow:0 18px 40px -16px rgba(17,18,20,.55)}
+  .tabbar a{display:flex; align-items:center; justify-content:center; gap:0; height:48px; min-width:48px; padding:0 12px; border-radius:999px; color:#8D8C99; text-decoration:none; transition:background .25s ease, color .25s ease, gap .25s ease, padding .25s ease, flex-grow .25s ease}
+  .tabbar a:focus-visible{outline:2px solid #FFFFFF; outline-offset:2px}
+  .tabbar .ti{display:grid; place-items:center; width:26px; height:26px}
+  .tabbar .ti svg{width:26px; height:26px}
+  .tabbar .tl{max-width:0; overflow:hidden; white-space:nowrap; font-weight:600; font-size:15px; transition:max-width .3s ease}
+  .tabbar a.on{background:#FFFFFF; color:#17161F; gap:8px; padding:0 18px 0 12px; flex-grow:1}
+  .tabbar a.on .tl{max-width:110px}
+  main{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+  footer.site{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+}
+@media (max-width:720px) and (prefers-reduced-motion: reduce){ .tabbar a,.tabbar .tl{transition:none} }

@@ -4,6 +4,7 @@ import { Poppins } from 'next/font/google';
 import './globals.css';
 import { getUser, isAdmin } from '@/lib/auth';
 import NavLinks from '@/components/NavLinks';
+import MobileNav from '@/components/MobileNav';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], variable: '--font-poppins' });
 
@@ -23,10 +24,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Link href="/" className="brand"><i aria-hidden="true" />Gatepass</Link>
             <NavLinks admin={admin} />
             <span className="spacer" />
-            {user ? <span className="me" title={user.email || ''}><i aria-hidden="true">{(user.email || '?')[0].toUpperCase()}</i></span> : <Link className="btn small primary" href="/login">Sign in</Link>}
+            {user ? <Link href="/account" className="me" title={user.email || ''} aria-label="Account"><i aria-hidden="true">{(user.email || '?')[0].toUpperCase()}</i></Link> : <Link className="btn small primary" href="/login">Sign in</Link>}
           </div>
         </header>
         <main className="wrap">{children}</main>
+        <MobileNav signedIn={!!user} />
         <footer className="site"><div className="wrap">
           <div className="footcols">
             <div className="fb"><Link href="/" className="brand"><i aria-hidden="true" />Gatepass</Link><p>Tickets for the best nights in Nigeria. Buy, share, invite and get in.</p></div>

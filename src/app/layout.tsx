@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Jost } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 import { getUser, isAdmin } from '@/lib/auth';
 import NavLinks from '@/components/NavLinks';
 
-const jost = Jost({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], variable: '--font-jost' });
+const poppins = Poppins({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], variable: '--font-poppins' });
 
 export const metadata: Metadata = {
   title: 'Gatepass',
@@ -16,7 +16,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await getUser().catch(() => null);
   const admin = user ? await isAdmin(user.id).catch(() => false) : false;
   return (
-    <html lang="en" className={jost.variable}>
+    <html lang="en" className={poppins.variable}>
       <body>
         <header className="top">
           <div className="wrap">

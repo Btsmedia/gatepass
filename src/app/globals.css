@@ -1,14 +1,14 @@
-/* Light theme only. Gatepass design tokens: Jost, soft grey cards, black pills, lavender accents. Mirrors the prototype. */
+/* Light theme only. Gatepass design tokens: Poppins, soft grey cards, black pills, lavender accents. Mirrors the prototype. */
 :root{
   --bg:#F7F7F5; --surface:#FFFFFF; --card:#EDECE7; --sunk:#EAE9E4; --ink:#111214; --muted:#6A6A70; --line:#E1E0DB;
   --lav:#BFB6F8; --lav-strong:#7E6CF0; --lav-ink:#1C1736; --good:#1D7A4C; --good-soft:#DDF0E4; --bad:#B3261E; --bad-soft:#F9E0DD; --warn:#9A560E; --warn-soft:#F6E8D3;
   --sky-a:#4C77AD; --sky-b:#93B3D8;
-  --display:var(--font-jost, "Jost"), "Avenir Next", "Segoe UI", system-ui, sans-serif; --body:var(--display);
+  --display:var(--font-poppins, "Poppins"), "Avenir Next", "Segoe UI", system-ui, sans-serif; --body:var(--display);
   color-scheme:light;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg); color:var(--ink); font-family:var(--font-jost, "Jost"), "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif; font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+body{background:var(--bg); color:var(--ink); font-family:var(--font-poppins, "Poppins"), "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif; font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
 h1,h2,h3{font-weight:500; line-height:1.1; margin:0; letter-spacing:-0.01em; text-wrap:balance}
 p{margin:0}
 a{color:inherit}
@@ -122,3 +122,7 @@ td.r,th.r{text-align:right}
 .result.ok{background:var(--good-soft); border-color:var(--good)} .result.bad{background:var(--bad-soft); border-color:var(--bad)}
 .result h2{font-size:40px; font-weight:600}
 footer.site{border-top:1px solid var(--line); padding-block:28px; color:var(--muted); font-size:14px}
+
+/* Headings at full strength: no faded or grey parts */
+h1,h2,h3,h4{opacity:1}
+h1 span,h2 span,h3 span,h4 span{color:inherit !important; opacity:1 !important}

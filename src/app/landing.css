@@ -337,8 +337,10 @@ html,body{overflow-x:clip}
 
 /* Who it's for on phones and tablets: equal cards, details stacked vertically */
 @media (max-width:900px){
-  .aud{align-items:stretch; gap:12px}
-  .audc, .audc:nth-child(even){aspect-ratio:3/4.4}
+  .aud{align-items:start; gap:12px}
+  /* Height comes from an in-flow spacer, not aspect-ratio: Safari can collapse aspect-ratio grid items to 0 */
+  .audc, .audc:nth-child(even){aspect-ratio:auto; display:block}
+  .audc::before{content:""; display:block; padding-top:146.67%}
   .audc .cap{flex-direction:column; align-items:flex-start; gap:8px; padding:12px; left:8px; right:8px; bottom:8px; border-radius:14px; min-height:134px}
   .audc .cap b{font-size:14px; line-height:1.25}
   .audc .cap small{margin-top:2px}

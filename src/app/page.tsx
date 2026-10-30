@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import './landing.css';
 import { listUpcoming, fromPrice, soldOut } from '@/lib/events';
-import { bg } from '@/lib/poster';
+import { bg, POSTERS } from '@/lib/poster';
 import { fmtDay, fmtTime, naira } from '@/lib/money';
 import { Ico } from '@/components/landing/Icons';
 import { Phone, DiscoverScreen, EventScreen, TicketScreen, InviteScreen, OrgScreen } from '@/components/landing/Phone';
@@ -25,37 +25,45 @@ export default async function Home() {
   const up = await listUpcoming().catch(() => [] as any[]);
   const ordered = [...up.filter((e: any) => e.featured), ...up.filter((e: any) => !e.featured && e.promo_url), ...up.filter((e: any) => !e.featured && !e.promo_url)];
   const cities = Array.from(new Set(up.map((e: any) => e.city).filter(Boolean))) as string[];
-  const fans = [0, 1, 2, 3].map((k) => ordered[k]);
-  const featured = ordered.slice(0, 6).map((ev: any, k: number) => ({
+  // Newest events first: the hero carousel shows what was added most recently.
+  const fresh = [...up].sort((a: any, b: any) => String(b.created_at).localeCompare(String(a.created_at))).slice(0, 8);
+  const weekAgo = Date.now() - 7 * 864e5;
+  const slides = fresh.map((ev: any, k: number) => ({
     id: ev.id, slug: ev.slug, title: ev.title, tagline: ev.tagline, category: ev.category,
     when: `${fmtDay(ev.starts_at)} · ${fmtTime(ev.starts_at)}`, venue: `${ev.venue}${ev.city ? ', ' + ev.city : ''}`,
     price: price(ev), soldOut: soldOut(ev.ticket_types), bg: bg(ev, k), promo: ev.promo_url,
+    badge: new Date(ev.created_at).getTime() > weekAgo ? 'Just added' : undefined,
   }));
   const cats = CATEGORIES.map((c) => ({ c, list: up.filter((e: any) => e.category === c) })).filter((x) => x.list.length);
   const fA = ordered[0], fB = ordered[1] || ordered[0], fC = ordered[2] || ordered[0];
 
   return (
     <>
-      <section className="skyhero"><div className="wrap">
-        <span className="tagpill" style={{ background: 'rgba(255,255,255,.18)', borderColor: 'rgba(255,255,255,.35)', color: '#fff' }}>{cities.length ? 'Live in ' + cities.slice(0, 4).join(' · ') : 'Events across Nigeria'}</span>
-        <h1><span className="lt">Find the</span> best nights. Get in <span className="lt">with one tap.</span></h1>
-        <p className="lede">Concerts, comedy, conferences and owambe near you. Pay in naira, get your QR ticket in seconds, and bring your people along.</p>
-        <form className="bigsearch" action="/events" role="search">{Ico.search}<input name="q" type="search" placeholder="Search events, artists, venues" aria-label="Search events" /><button className="btn primary" type="submit">Find events</button></form>
-        <div className="quick">
-          <Link className="chip" href="/events?when=weekend">This weekend</Link>
-          {cities.slice(0, 4).map((c) => <Link key={c} className="chip" href={`/events?city=${encodeURIComponent(c)}`}>{c}</Link>)}
+      <section className="nhero" aria-labelledby="nhero-title">
+        <div className="nhero-head">
+          <div><span className="tagpill">{cities.length ? 'Live in ' + cities.slice(0, 3).join(' · ') : 'Events across Nigeria'}</span><h1 id="nhero-title">New on Gatepass</h1></div>
+          {up.length > 0 && <Link className="pillbtn" href="/events">See all {up.length} events {Ico.right}</Link>}
         </div>
-        <div className="stage">
-          {(['f1', 'f2'] as const).map((c, k) => <Fan key={c} cls={c} ev={fans[k]} i={k} />)}
-          <Phone><DiscoverScreen events={ordered} /></Phone>
-          {(['f3', 'f4'] as const).map((c, k) => <Fan key={c} cls={c} ev={fans[k + 2]} i={k + 2} />)}
+        {slides.length > 0 ? <Featured items={slides} label="New events" /> : (
+          <div className="tv"><div className="tv-track"><div className="slide active nhero-empty">
+            <div className="still" style={{ background: POSTERS[4] }} />
+            <div className="slide-body">
+              <div className="slide-kicker"><span>Coming soon</span></div>
+              <h2>Fresh events land here first</h2>
+              <p className="tl">Concerts, comedy, conferences and owambe near you. Pay in naira and get your QR ticket in seconds.</p>
+              <div className="slide-actions"><Link className="btn white" href="/organizer/events/new">Create an event</Link><Link className="btn glass" href="/events">Browse events</Link></div>
+            </div>
+          </div></div></div>
+        )}
+        <div className="nhero-search">
+          <form className="bigsearch" action="/events" role="search">{Ico.search}<input name="q" type="search" placeholder="Search events, artists, venues" aria-label="Search events" /><button className="btn primary" type="submit">Find events</button></form>
+          <div className="quick">
+            <Link className="chip" href="/events?when=weekend">This weekend</Link>
+            <Link className="chip" href="/events?when=week">Next 7 days</Link>
+            {cities.slice(0, 4).map((c) => <Link key={c} className="chip" href={`/events?city=${encodeURIComponent(c)}`}>{c}</Link>)}
+          </div>
         </div>
-      </div></section>
-
-      {featured.length > 0 && <>
-        <section className="lsec cent"><span className="tagpill">Featured</span><h2 className="tt"><span>On Gatepass</span> this month</h2></section>
-        <Featured items={featured} />
-      </>}
+      </section>
 
       <section className="lsec">
         <div className="cent"><span className="tagpill">Who it’s for</span><h2 className="tt"><span>Built for every</span> kind of night out</h2></div>
@@ -150,8 +158,3 @@ export default async function Home() {
   );
 }
 
-function Fan({ cls, ev, i }: { cls: string; ev: any; i: number }) {
-  const inner = <>{ev?.promo_url && <video src={ev.promo_url} muted loop playsInline autoPlay preload="metadata" aria-hidden="true" />}{ev && <span>{ev.title}<small>{shortDay(ev.starts_at)} · {ev.city || ''}</small></span>}</>;
-  return ev ? <Link className={`fan ${cls}`} href={`/e/${ev.slug}`} style={{ background: bg(ev, i) }} aria-label={ev.title}>{inner}</Link>
-    : <div className={`fan ${cls}`} style={{ background: bg(undefined, i) }} aria-hidden="true" />;
-}

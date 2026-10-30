@@ -3,11 +3,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Ico } from './Icons';
 
-type Ev = { id: string; slug: string; title: string; tagline?: string; category?: string; when: string; venue: string; price: string; soldOut: boolean; bg: string; promo?: string | null };
+type Ev = { id: string; slug: string; title: string; tagline?: string; category?: string; when: string; venue: string; price: string; soldOut: boolean; bg: string; promo?: string | null; badge?: string };
 const DUR = 7000;
 
 // Apple TV-style featured carousel: swipe, arrows, dots with progress, auto-advance, pause.
-export default function Featured({ items }: { items: Ev[] }) {
+export default function Featured({ items, label = 'Featured events' }: { items: Ev[]; label?: string }) {
   const track = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -47,13 +47,13 @@ export default function Featured({ items }: { items: Ev[] }) {
   if (!items.length) return null;
   return (
     <section className={'tv' + (paused || hover ? ' paused' : '')} style={{ ['--dur' as any]: DUR / 1000 + 's' }} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <div className="tv-track" ref={track} aria-roledescription="carousel" aria-label="Featured events">
+      <div className="tv-track" ref={track} aria-roledescription="carousel" aria-label={label}>
         {items.map((ev, k) => (
           <div key={ev.id} data-k={k} className={'slide' + (k === i ? ' active' : '')} role="group" aria-roledescription="slide" aria-label={`${k + 1} of ${items.length}: ${ev.title}`} onClick={(e) => { if (k !== i && !(e.target as HTMLElement).closest('a,button')) goTo(k); }}>
             {ev.promo ? <video src={ev.promo} muted playsInline loop preload={k === 0 ? 'auto' : 'metadata'} aria-hidden="true" /> : <div className="still" style={{ background: ev.bg, backgroundSize: 'cover', backgroundPosition: 'center' }} />}
             {ev.promo && <div className="slide-tools"><button type="button" className="glassbtn" aria-label={muted ? 'Turn sound on' : 'Mute'} onClick={() => setMuted(!muted)}>{muted ? <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" /><path d="m17 9 5 6M22 9l-5 6" /></svg> : <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" /><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12" /></svg>}</button></div>}
             <div className="slide-body">
-              <div className="slide-kicker"><span>{ev.category || 'Featured'}</span>{ev.soldOut && <span className="live">Sold out</span>}</div>
+              <div className="slide-kicker"><span>{ev.category || 'Event'}</span>{ev.soldOut ? <span className="live">Sold out</span> : ev.badge && <span className="live">{ev.badge}</span>}</div>
               <h2>{ev.title}</h2>
               {ev.tagline && <p className="tl">{ev.tagline}</p>}
               <p className="meta3">{ev.when} · {ev.venue}</p>

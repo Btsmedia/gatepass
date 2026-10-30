@@ -316,3 +316,21 @@ html,body{overflow-x:clip}
 .footcols a:hover{color:var(--ink)}
 .footcols .fb p{color:var(--muted); font-size:14px; max-width:32ch; margin-top:10px}
 .copy{color:var(--muted); font-size:13px; padding-bottom:12px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+
+/* Hero: carousel of the newest events, then search */
+.nhero{display:grid; gap:18px; margin-bottom:clamp(36px,6vw,72px)}
+.nhero-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.nhero-head > div{display:grid; gap:10px; justify-items:start}
+.nhero-head h1{font-size:clamp(32px,4.6vw,52px); line-height:1.04; letter-spacing:-0.02em; font-weight:600}
+.nhero .tv{margin-bottom:0}
+.nhero-empty{opacity:1; transform:none}
+.nhero-search{display:grid; justify-items:center; gap:14px; margin-top:8px}
+.nhero-search .bigsearch{width:min(640px,100%)}
+.nhero-search .quick{justify-content:center}
+@media (max-width:720px){
+  .nhero{gap:14px}
+  .nhero-head .pillbtn{display:none}
+}
+.nhero-head .tagpill{margin:0; justify-self:start}
+.tv-dots .tv-pause{width:30px; height:30px; border-radius:50%; background:var(--card); overflow:visible; display:grid; place-items:center}
+.tv-dots .tv-pause:hover{background:var(--sunk)}

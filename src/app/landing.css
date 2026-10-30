@@ -334,3 +334,12 @@ html,body{overflow-x:clip}
 .nhero-head .tagpill{margin:0; justify-self:start}
 .tv-dots .tv-pause{width:30px; height:30px; border-radius:50%; background:var(--card); overflow:visible; display:grid; place-items:center}
 .tv-dots .tv-pause:hover{background:var(--sunk)}
+
+/* Who it's for on phones and tablets: equal cards, details stacked vertically */
+@media (max-width:900px){
+  .aud{align-items:stretch; gap:12px}
+  .audc, .audc:nth-child(even){aspect-ratio:3/4.4}
+  .audc .cap{flex-direction:column; align-items:flex-start; gap:8px; padding:12px; left:8px; right:8px; bottom:8px; border-radius:14px; min-height:134px}
+  .audc .cap b{font-size:14px; line-height:1.25}
+  .audc .cap small{margin-top:2px}
+}

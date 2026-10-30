@@ -5,7 +5,7 @@ export type EventRow = any;
 
 export async function listUpcoming(filters: { q?: string; city?: string; category?: string; from?: string; to?: string } = {}) {
   let q = supabaseAdmin().from('events')
-    .select('id, slug, title, tagline, category, starts_at, venue, city, cover_url, featured, ticket_types(price_kobo, quantity, sold)')
+    .select('id, slug, title, tagline, category, starts_at, venue, city, cover_url, promo_url, featured, ticket_types(name, price_kobo, quantity, sold)')
     .eq('status', 'published')
     .gte('starts_at', filters.from || new Date(Date.now() - 8 * 3600e3).toISOString())
     .order('starts_at', { ascending: true })

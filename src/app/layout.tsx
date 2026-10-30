@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Jost } from 'next/font/google';
 import './globals.css';
 import { getUser, isAdmin } from '@/lib/auth';
+import NavLinks from '@/components/NavLinks';
 
 const jost = Jost({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], variable: '--font-jost' });
 
@@ -20,18 +21,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <header className="top">
           <div className="wrap">
             <Link href="/" className="brand"><i aria-hidden="true" />Gatepass</Link>
-            <nav className="main" aria-label="Main">
-              <Link href="/events">Discover</Link>
-              <Link href="/tickets">My tickets</Link>
-              <Link href="/organizer">Organizer</Link>
-              {admin && <Link href="/admin">Admin</Link>}
-            </nav>
+            <NavLinks admin={admin} />
             <span className="spacer" />
-            {user ? <span className="muted">{user.email}</span> : <Link className="btn small primary" href="/login">Sign in</Link>}
+            {user ? <span className="me" title={user.email || ''}><i aria-hidden="true">{(user.email || '?')[0].toUpperCase()}</i></span> : <Link className="btn small primary" href="/login">Sign in</Link>}
           </div>
         </header>
         <main className="wrap">{children}</main>
-        <footer className="site"><div className="wrap">© {new Date().getFullYear()} Gatepass · Tickets for the best nights in Nigeria</div></footer>
+        <footer className="site"><div className="wrap">
+          <div className="footcols">
+            <div className="fb"><Link href="/" className="brand"><i aria-hidden="true" />Gatepass</Link><p>Tickets for the best nights in Nigeria. Buy, share, invite and get in.</p></div>
+            <div><h4>Explore</h4><ul><li><Link href="/events">Discover</Link></li><li><Link href="/events?when=weekend">This weekend</Link></li><li><Link href="/events?when=week">Next 7 days</Link></li></ul></div>
+            <div><h4>Your account</h4><ul><li><Link href="/tickets">My tickets</Link></li><li><Link href="/login">Sign in</Link></li></ul></div>
+            <div><h4>Organizers</h4><ul><li><Link href="/organizer/events/new">Create an event</Link></li><li><Link href="/organizer">Dashboard</Link></li><li><Link href="/organizer/payouts">Payouts</Link></li></ul></div>
+          </div>
+          <div className="copy"><span>© {new Date().getFullYear()} Gatepass</span><span>Made in Lagos</span></div>
+        </div></footer>
       </body>
     </html>
   );

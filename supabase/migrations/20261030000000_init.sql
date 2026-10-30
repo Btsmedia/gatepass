@@ -1,4 +1,5 @@
--- Gatepass schema. Run once in Supabase: SQL Editor > New query > paste > Run.
+-- Gatepass schema. Safe to run more than once. Applied automatically by the Supabase GitHub integration,
+-- or by hand: SQL Editor > New query > paste > Run.
 -- Money is stored in kobo (1 naira = 100 kobo) as integers.
 
 create extension if not exists pgcrypto;
@@ -254,45 +255,62 @@ alter table public.order_items enable row level security;
 alter table public.tickets enable row level security;
 alter table public.invites enable row level security;
 
+drop policy if exists "own profile" on public.profiles;
 create policy "own profile" on public.profiles for select using (id = auth.uid() or public.is_admin());
+drop policy if exists "update own profile" on public.profiles;
 create policy "update own profile" on public.profiles for update using (id = auth.uid()) with check (id = auth.uid());
 -- People can edit their name and phone, never their admin flag.
 revoke update on public.profiles from authenticated, anon;
 grant update (full_name, phone) on public.profiles to authenticated;
 
+drop policy if exists "organizer read" on public.organizers;
 create policy "organizer read" on public.organizers for select using (owner_id = auth.uid() or public.is_admin());
+drop policy if exists "organizer insert" on public.organizers;
 create policy "organizer insert" on public.organizers for insert with check (owner_id = auth.uid());
+drop policy if exists "organizer update" on public.organizers;
 create policy "organizer update" on public.organizers for update using (owner_id = auth.uid() or public.is_admin());
 
+drop policy if exists "events public read" on public.events;
 create policy "events public read" on public.events for select using (
   status = 'published' or public.is_admin()
   or exists (select 1 from public.organizers o where o.id = organizer_id and o.owner_id = auth.uid()));
+drop policy if exists "events owner write" on public.events;
 create policy "events owner write" on public.events for all using (
   public.is_admin() or exists (select 1 from public.organizers o where o.id = organizer_id and o.owner_id = auth.uid()))
   with check (public.is_admin() or exists (select 1 from public.organizers o where o.id = organizer_id and o.owner_id = auth.uid()));
 
+drop policy if exists "ticket types read" on public.ticket_types;
 create policy "ticket types read" on public.ticket_types for select using (
   exists (select 1 from public.events e where e.id = event_id));
+drop policy if exists "ticket types owner write" on public.ticket_types;
 create policy "ticket types owner write" on public.ticket_types for all using (
   exists (select 1 from public.events e join public.organizers o on o.id = e.organizer_id where e.id = event_id and (o.owner_id = auth.uid() or public.is_admin())));
 
+drop policy if exists "staff read" on public.event_staff;
 create policy "staff read" on public.event_staff for select using (user_id = auth.uid() or public.is_admin()
   or exists (select 1 from public.events e join public.organizers o on o.id = e.organizer_id where e.id = event_id and o.owner_id = auth.uid()));
 
 -- Orders, tickets and invites are written only by the server (service role).
+drop policy if exists "orders read" on public.orders;
 create policy "orders read" on public.orders for select using (
   user_id = auth.uid() or public.is_admin()
   or exists (select 1 from public.events e join public.organizers o on o.id = e.organizer_id where e.id = event_id and o.owner_id = auth.uid()));
+drop policy if exists "order items read" on public.order_items;
 create policy "order items read" on public.order_items for select using (
   exists (select 1 from public.orders x where x.id = order_id));
+drop policy if exists "tickets read" on public.tickets;
 create policy "tickets read" on public.tickets for select using (
   public.is_admin()
   or exists (select 1 from public.orders x where x.id = order_id and x.user_id = auth.uid())
   or exists (select 1 from public.events e join public.organizers o on o.id = e.organizer_id where e.id = event_id and o.owner_id = auth.uid()));
+drop policy if exists "invites read" on public.invites;
 create policy "invites read" on public.invites for select using (inviter_id = auth.uid() or public.is_admin());
 
 -- ---------- Storage bucket for covers, promo videos and galleries ----------
 insert into storage.buckets (id, name, public) values ('media', 'media', true) on conflict (id) do nothing;
+drop policy if exists "media public read" on storage.objects;
 create policy "media public read" on storage.objects for select using (bucket_id = 'media');
+drop policy if exists "media upload by signed-in users" on storage.objects;
 create policy "media upload by signed-in users" on storage.objects for insert with check (bucket_id = 'media' and auth.role() = 'authenticated' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "media delete own" on storage.objects;
 create policy "media delete own" on storage.objects for delete using (bucket_id = 'media' and owner = auth.uid());

@@ -17,7 +17,8 @@ You need: a computer with internet, and accounts on **GitHub**, **Supabase** and
 ## 2. Create the database (Supabase)
 1. supabase.com → **New project**. Name: `gatepass`. Region: the closest to Nigeria available (e.g. **West EU (London)** or **Central EU (Frankfurt)**). Save the database password somewhere safe.
 2. Wait for it to finish setting up (1–2 minutes).
-3. Left menu → **SQL Editor** → **New query**. Open `supabase/migrations/0001_init.sql` from the zip, copy everything, paste, click **Run**. You should see "Success. No rows returned".
+3. **Easiest:** connect GitHub instead of pasting SQL. Project Settings → **Integrations** → **GitHub** → connect `gatepass`, set **Supabase directory** to `supabase`, turn on **Deploy to production** with branch `main`. Supabase then creates the tables and the seat-release job every time the code changes. Skip the rest of this step and step 6 below.
+   **By hand instead:** Left menu → **SQL Editor** → **New query**. Open `supabase/migrations/20261030000000_init.sql` from the zip, copy everything, paste, click **Run**. You should see "Success. No rows returned".
 4. Left menu → **Project Settings** → **API**. Keep this tab open. You'll copy three values later:
    - **Project URL**
    - **anon public** key

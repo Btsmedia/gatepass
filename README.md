@@ -19,7 +19,7 @@ Event ticketing for Nigeria: discover events, buy tickets in naira (card, transf
 | Organizer dashboard, event editor, payouts | `src/app/organizer` |
 | Door check-in (camera or code) | `src/app/door/[eventId]`, `src/app/api/checkin` |
 | Admin | `src/app/admin` |
-| Database, security rules, inventory functions | `supabase/migrations/0001_init.sql` |
+| Database, security rules, inventory functions | `supabase/migrations/` |
 
 ## How money moves
 Buyer pays ticket price + booking fee (default 5% + ₦100 per paid ticket, set in `.env`). Paystack splits each payment: the organizer's subaccount receives the ticket price, Gatepass keeps the booking fee and pays Paystack's processing fee from it.

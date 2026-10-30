@@ -8,7 +8,8 @@ export const dynamic = 'force-dynamic';
 
 const paystackFee = (k: number) => (k <= 0 ? 0 : Math.min(200000, Math.round(k * 0.015) + (k >= 250000 ? 10000 : 0)));
 
-export default async function Admin({ searchParams }: { searchParams: { tab?: string } }) {
+export default async function Admin(props: { searchParams: Promise<{ tab?: string }> }) {
+  const searchParams = await props.searchParams;
   await requireAdmin();
   const tab = searchParams.tab || 'overview';
   const db = supabaseAdmin();

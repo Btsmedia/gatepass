@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 async function signOut() {
   'use server';
-  await supabaseServer().auth.signOut();
+  await (await supabaseServer()).auth.signOut();
   redirect('/');
 }
 

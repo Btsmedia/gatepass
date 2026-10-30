@@ -9,7 +9,7 @@ export default async function MyTickets() {
   const user = await requireUser('/tickets');
   const db = supabaseAdmin();
   // Tickets bought while signed in, or with the same email before signing up.
-  const { data: orders } = await db.from('orders').select('id').eq('status', 'paid').or(`user_id.eq.${user.id},buyer_email.eq.${(user.email || '').toLowerCase()}`);
+  const { data: orders } = await db.from('orders').select('id').eq('status', 'paid').or(`user_id.eq.${user.id},buyer_email.eq."${(user.email || '').toLowerCase().replace(/["\\]/g, '')}"`);
   const ids = (orders || []).map((o) => o.id);
   const { data: tickets } = ids.length ? await db.from('tickets').select('code, status, ticket_types(name), events(title, starts_at, venue)').in('order_id', ids) : { data: [] as any[] };
   const { data: invites } = await db.from('invites').select('id, guest_name, contact, status, events(title)').eq('inviter_id', user.id).order('created_at', { ascending: false });

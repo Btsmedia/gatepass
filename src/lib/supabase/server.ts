@@ -3,8 +3,8 @@ import { cookies } from 'next/headers';
 
 // Supabase client for server components, server actions and route handlers.
 // Acts as the signed-in user, so row level security applies.
-export function supabaseServer() {
-  const store = cookies();
+export async function supabaseServer() {
+  const store = await cookies();
   return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
       getAll: () => store.getAll(),

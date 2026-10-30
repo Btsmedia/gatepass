@@ -1,4 +1,5 @@
 'use client';
+import type React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -12,7 +13,7 @@ const I = {
 
 export default function NavLinks({ admin }: { admin: boolean }) {
   const path = usePathname() || '/';
-  const links: [string, string, JSX.Element][] = [['/', 'Home', I.home], ['/events', 'Discover', I.cal], ['/tickets', 'My tickets', I.ticket], ['/organizer', 'Organizer', I.org]];
+  const links: [string, string, React.ReactElement][] = [['/', 'Home', I.home], ['/events', 'Discover', I.cal], ['/tickets', 'My tickets', I.ticket], ['/organizer', 'Organizer', I.org]];
   if (admin) links.push(['/admin', 'Admin', I.admin]);
   const on = (href: string) => (href === '/' ? path === '/' : path.startsWith(href) || (href === '/events' && path.startsWith('/e/')));
   return (

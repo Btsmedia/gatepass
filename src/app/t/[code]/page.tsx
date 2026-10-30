@@ -7,8 +7,9 @@ import ShareTicket from '@/components/ShareTicket';
 export const dynamic = 'force-dynamic';
 
 // Anyone with the ticket link can show it at the door, like a PDF ticket.
-export default async function TicketPage({ params }: { params: { code: string } }) {
-  const code = params.code.toUpperCase();
+export default async function TicketPage(props: { params: Promise<{ code: string }> }) {
+  const code = (await props.params).code.toUpperCase();
+  if (!/^GP[A-Z0-9]{8}$/.test(code)) notFound();
   const { data: t } = await supabaseAdmin().from('tickets').select('*, ticket_types(name, price_kobo), events(title, slug, starts_at, venue, city)').eq('code', code).maybeSingle();
   if (!t) notFound();
   const ev = (t as any).events, tt = (t as any).ticket_types;

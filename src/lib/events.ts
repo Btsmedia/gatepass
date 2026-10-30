@@ -11,9 +11,10 @@ export async function listUpcoming(filters: { q?: string; city?: string; categor
     .order('starts_at', { ascending: true })
     .limit(200);
   if (filters.to) q = q.lt('starts_at', filters.to);
-  if (filters.city) q = q.ilike('city', filters.city);
-  if (filters.category) q = q.eq('category', filters.category);
-  if (filters.q) q = q.or(`title.ilike.%${filters.q.replace(/[%,()]/g, '')}%,venue.ilike.%${filters.q.replace(/[%,()]/g, '')}%,city.ilike.%${filters.q.replace(/[%,()]/g, '')}%`);
+  if (filters.city) q = q.ilike('city', filters.city.replace(/[%_\\]/g, '').slice(0, 60));
+  if (filters.category) q = q.eq('category', filters.category.slice(0, 40));
+  const term = (filters.q || '').replace(/[^\p{L}\p{N} '&-]/gu, ' ').trim().slice(0, 60);
+  if (term) q = q.or(`title.ilike.*${term}*,venue.ilike.*${term}*,city.ilike.*${term}*`);
   const { data, error } = await q;
   if (error) throw error;
   return data || [];

@@ -5,7 +5,8 @@ import DoorScanner from '@/components/DoorScanner';
 
 export const dynamic = 'force-dynamic';
 
-export default async function Door({ params }: { params: { eventId: string } }) {
+export default async function Door(props: { params: Promise<{ eventId: string }> }) {
+  const params = await props.params;
   const user = await requireUser(`/door/${params.eventId}`);
   if (!(await canManageEvent(user.id, params.eventId))) redirect('/');
   const { data: ev } = await supabaseAdmin().from('events').select('id, title').eq('id', params.eventId).maybeSingle();

@@ -7,7 +7,8 @@ import InviteActions from '@/components/InviteActions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function InvitePage({ params, searchParams }: { params: { id: string }; searchParams: { accept?: string } }) {
+export default async function InvitePage(props: { params: Promise<{ id: string }>; searchParams: Promise<{ accept?: string }> }) {
+  const params = await props.params, searchParams = await props.searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(params.id)) notFound();
   const db = supabaseAdmin();
   const { data: inv } = await db.from('invites').select('*, events(*), ticket_types(*)').eq('id', params.id).maybeSingle();

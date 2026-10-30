@@ -12,7 +12,7 @@ export async function fulfilByReference(reference: string) {
   if (order.status === 'paid') return { ok: true, order };
   const tx = await verifyTransaction(reference);
   if (tx.status !== 'success') return { ok: false, reason: 'not_paid' as const, order };
-  if (tx.amount < order.total_kobo) return { ok: false, reason: 'amount_mismatch' as const, order };
+  if (tx.reference !== reference || (tx as any).currency !== 'NGN' || tx.amount < order.total_kobo) return { ok: false, reason: 'amount_mismatch' as const, order };
   return issue(order.id, reference);
 }
 

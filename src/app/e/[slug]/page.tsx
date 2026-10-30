@@ -5,6 +5,7 @@ import { fmtDay, fmtTime, FEE_FLAT_KOBO, FEE_PERCENT } from '@/lib/money';
 import BuyBox from '@/components/BuyBox';
 import AboutTabs from '@/components/AboutTabs';
 import InviteForm from '@/components/InviteForm';
+import { cssUrl, safeMediaUrl } from '@/lib/safe';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,15 +14,15 @@ async function load(slug: string) {
   return data;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const ev = await load(params.slug);
-  return ev ? { title: `${ev.title} · Gatepass`, description: ev.tagline || undefined, openGraph: { images: ev.cover_url ? [ev.cover_url] : [] } } : {};
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const ev = await load((await props.params).slug);
+  return ev ? { title: `${ev.title} · Gatepass`, description: ev.tagline || undefined, openGraph: { images: safeMediaUrl(ev.cover_url) ? [safeMediaUrl(ev.cover_url)!] : [] } } : {};
 }
 
 const shortName = (n: string) => { const p = n.trim().split(/\s+/); return p.length > 1 ? `${p[0]} ${p[p.length - 1][0]}.` : p[0]; };
 
-export default async function EventPage({ params }: { params: { slug: string } }) {
-  const ev = await load(params.slug);
+export default async function EventPage(props: { params: Promise<{ slug: string }> }) {
+  const ev = await load((await props.params).slug);
   if (!ev) notFound();
   const types = [...(ev.ticket_types || [])].sort((a: any, b: any) => a.sort - b.sort);
   let going = null as null | { count: number; names: string[] };
@@ -32,7 +33,7 @@ export default async function EventPage({ params }: { params: { slug: string } }
   }
   return (
     <article>
-      <div className="banner" style={{ backgroundImage: ev.cover_url ? `url(${ev.cover_url})` : 'linear-gradient(160deg,#4C77AD,#BFB6F8)' }}>
+      <div className="banner" style={{ backgroundImage: cssUrl(ev.cover_url, 'linear-gradient(160deg,#4C77AD,#BFB6F8)') }}>
         {ev.promo_url && <video src={ev.promo_url} muted autoPlay loop playsInline aria-hidden="true" />}
         <div><p className="eyebrow" style={{ color: 'rgba(255,255,255,.85)' }}>{fmtDay(ev.starts_at)}</p><h1>{ev.title}</h1>{ev.tagline && <p>{ev.tagline}</p>}</div>
       </div>

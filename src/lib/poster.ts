@@ -1,3 +1,5 @@
+import { cssUrl } from './safe';
+
 // Gradient posters used when an event has no cover image (same set as the prototype).
 export const POSTERS = [
   'radial-gradient(120% 90% at 12% 10%, #2DD4A3 0%, transparent 55%), radial-gradient(90% 80% at 90% 90%, #1565C0 0%, transparent 60%), #0B2A3A',
@@ -8,4 +10,4 @@ export const POSTERS = [
   'repeating-radial-gradient(circle at 30% 40%, #1E3A8A 0 10px, #3557C4 10px 14px, #1E3A8A 14px 26px)',
 ];
 export const bg = (ev: { cover_url?: string | null } | undefined, i: number) =>
-  ev?.cover_url ? `url("${ev.cover_url}")` : POSTERS[i % POSTERS.length];
+  cssUrl(ev?.cover_url, POSTERS[i % POSTERS.length]);

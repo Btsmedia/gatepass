@@ -1,14 +1,20 @@
 import Link from 'next/link';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { fulfilByReference } from '@/lib/fulfil';
+import { isUuid } from '@/lib/safe';
 
 export const dynamic = 'force-dynamic';
 
-export default async function Verify({ searchParams }: { searchParams: { reference?: string; order?: string } }) {
+export default async function Verify(props: { searchParams: Promise<{ reference?: string; order?: string }> }) {
+  const searchParams = await props.searchParams;
   const db = supabaseAdmin();
-  let orderId = searchParams.order;
+  let orderId: string | undefined;
+  if (searchParams.order && isUuid(searchParams.order)) {
+    const { data: o } = await db.from('orders').select('id, total_kobo, status').eq('id', searchParams.order).maybeSingle();
+    if (o && o.total_kobo === 0 && o.status === 'paid') orderId = o.id;
+  }
   let failed = '';
-  if (searchParams.reference) {
+  if (searchParams.reference && /^GP-[0-9A-F]{16}$/.test(searchParams.reference)) {
     const r = await fulfilByReference(searchParams.reference).catch((e) => ({ ok: false, reason: e.message } as any));
     if (r.ok) orderId = r.order.id; else failed = r.reason === 'not_paid' ? 'Your payment didn’t go through. No money was taken.' : 'We couldn’t confirm your payment yet. If you were charged, your tickets will arrive by email shortly.';
   }

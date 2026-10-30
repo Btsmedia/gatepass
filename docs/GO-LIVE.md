@@ -29,6 +29,11 @@ Work through this before taking real money. Items marked **Blocker** must be don
 - [ ] Turn on two-factor login for GitHub, Vercel, Supabase, Paystack and Resend.
 - [ ] Supabase → Authentication → set **Rate limits** and enable **CAPTCHA** (hCaptcha/Turnstile) for sign-in if you see abuse.
 - [ ] Only you (and trusted staff) have `is_admin = true`.
+- [ ] Check the security migration ran: Supabase → SQL Editor → `select has_function_privilege('anon', 'public.fulfil_order(uuid, text)', 'execute');` must return **false**.
+- [ ] Supabase → Authentication → URL Configuration: Site URL = your live address; Redirect URLs contains only your own `…/auth/callback` addresses.
+- [ ] Supabase → Authentication → set **Email OTP expiry** to 1 hour or less.
+- [ ] Optional: Vercel → Firewall → add a rate-limit rule on `/api/checkout` and `/api/invites` (the app already limits these in the database; this stops floods earlier).
+- [ ] Keep dependencies patched: run `npm audit` monthly and upgrade Next.js when a security release comes out.
 - [ ] Supabase **Point-in-time recovery** or daily backups (Pro plan). On the free plan, export a backup weekly (Database → Backups).
 
 ## 5. Reliability

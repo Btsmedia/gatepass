@@ -12,7 +12,8 @@ function range(when?: string) {
   return {};
 }
 
-export default async function Discover({ searchParams }: { searchParams: Record<string, string | undefined> }) {
+export default async function Discover(props: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const searchParams = await props.searchParams;
   const { q, city, category, when } = searchParams;
   const events = await listUpcoming({ q, city, category, ...range(when) }).catch(() => []);
   const link = (patch: Record<string, string | undefined>) => {

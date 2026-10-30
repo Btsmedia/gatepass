@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { requireUser, canManageEvent } from '@/lib/auth';
+import { requireUser, canEditEvent } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { fmtDay, naira, priceLabel } from '@/lib/money';
 import EventForm from '@/components/EventForm';
@@ -8,9 +8,10 @@ import { saveEvent, setStatus } from '../../actions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ManageEvent({ params, searchParams }: { params: { id: string }; searchParams: { edit?: string } }) {
+export default async function ManageEvent(props: { params: Promise<{ id: string }>; searchParams: Promise<{ edit?: string }> }) {
+  const params = await props.params, searchParams = await props.searchParams;
   const user = await requireUser(`/organizer/events/${params.id}`);
-  if (!(await canManageEvent(user.id, params.id))) redirect('/organizer');
+  if (!(await canEditEvent(user.id, params.id))) redirect('/organizer');
   const db = supabaseAdmin();
   const { data: ev } = await db.from('events').select('*, ticket_types(*)').eq('id', params.id).maybeSingle();
   if (!ev) notFound();
